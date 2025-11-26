@@ -1,0 +1,244 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="mb-8">
+    <h1 class="text-3xl font-bold text-gray-900">Dashboard Financeiro</h1>
+    <p class="mt-2 text-sm text-gray-600">Visão geral de pagamentos e pendências</p>
+  </div>
+
+  <!-- Cards de Estatísticas Gerais -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8">
+    <!-- Total de Responsáveis -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17 20h5v-2a3 3 0 00-5.356-1.857M17 20H7m10 0v-2c0-.656-.126-1.283-.356-1.857M7 20H2v-2a3 3 0 015.356-1.857M7 20v-2c0-.656.126-1.283.356-1.857m0 0a5.002 5.002 0 019.288 0M15 7a3 3 0 11-6 0 3 3 0 016 0zm6 3a2 2 0 11-4 0 2 2 0 014 0zM7 10a2 2 0 11-4 0 2 2 0 014 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total de Responsáveis</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_responsaveis %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Total de Cobranças -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total de Cobranças</dt>
+              <dd class="text-lg font-medium text-gray-900"><%= @total_cobrancas %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valor Total Recebido -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-green-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Recebido</dt>
+              <dd class="text-lg font-medium text-green-600">R$ <%= sprintf('%.2f', @total_valor_pago).gsub('.', ',') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Valor Total Pendente -->
+    <div class="bg-white overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-yellow-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-gray-500 truncate">Total Pendente</dt>
+              <dd class="text-lg font-medium text-yellow-600">R$ <%= sprintf('%.2f', @total_valor_pendente).gsub('.', ',') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Cards de Status -->
+  <div class="grid grid-cols-1 gap-5 sm:grid-cols-3 mb-8">
+    <!-- Cobranças Pagas -->
+    <div class="bg-green-50 border border-green-200 overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-green-800 truncate">Cobranças Pagas</dt>
+              <dd class="text-2xl font-bold text-green-900"><%= @total_cobrancas_pagas %></dd>
+              <dd class="text-sm text-green-700">R$ <%= sprintf('%.2f', @total_valor_pago).gsub('.', ',') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cobranças Vencidas -->
+    <div class="bg-red-50 border border-red-200 overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-red-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4m0 4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-red-800 truncate">Cobranças Vencidas</dt>
+              <dd class="text-2xl font-bold text-red-900"><%= @cobrancas_vencidas.count %></dd>
+              <dd class="text-sm text-red-700">R$ <%= sprintf('%.2f', @total_valor_vencido).gsub('.', ',') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Cobranças Pendentes -->
+    <div class="bg-yellow-50 border border-yellow-200 overflow-hidden shadow rounded-lg">
+      <div class="p-5">
+        <div class="flex items-center">
+          <div class="flex-shrink-0">
+            <svg class="h-6 w-6 text-yellow-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"/>
+            </svg>
+          </div>
+          <div class="ml-5 w-0 flex-1">
+            <dl>
+              <dt class="text-sm font-medium text-yellow-800 truncate">Cobranças Pendentes</dt>
+              <dd class="text-2xl font-bold text-yellow-900"><%= @cobrancas_pendentes.count %></dd>
+              <dd class="text-sm text-yellow-700">R$ <%= sprintf('%.2f', @total_valor_pendente_futuro).gsub('.', ',') %></dd>
+            </dl>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Tabela de Responsáveis -->
+  <div class="bg-white shadow rounded-lg">
+    <div class="px-4 py-5 sm:p-6">
+      <h2 class="text-lg font-medium text-gray-900 mb-4">Estatísticas por Responsável</h2>
+      <div class="overflow-hidden">
+        <table class="min-w-full divide-y divide-gray-300">
+          <thead class="bg-gray-50">
+            <tr>
+              <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">Responsável</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Total Cobranças</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor Total</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor Pago</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor Pendente</th>
+              <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Vencidas</th>
+              <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                <span class="sr-only">Ações</span>
+              </th>
+            </tr>
+          </thead>
+          <tbody class="divide-y divide-gray-200 bg-white">
+            <% if @responsaveis.any? %>
+              <% @responsaveis.each do |responsavel| %>
+                <tr class="hover:bg-gray-50">
+                  <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                    <%= responsavel.nome %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                    <%= responsavel.total_cobrancas %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm font-semibold text-gray-900">
+                    R$ <%= sprintf('%.2f', responsavel.total_valor_cobrancas).gsub('.', ',') %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm text-green-600">
+                    R$ <%= sprintf('%.2f', responsavel.total_valor_pago).gsub('.', ',') %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm <%= responsavel.total_valor_pendente > 0 ? 'text-red-600' : 'text-gray-500' %>">
+                    R$ <%= sprintf('%.2f', responsavel.total_valor_pendente).gsub('.', ',') %>
+                  </td>
+                  <td class="whitespace-nowrap px-3 py-4 text-sm">
+                    <% vencidas = responsavel.cobrancas_vencidas.count %>
+                    <% if vencidas > 0 %>
+                      <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                        <%= vencidas %> vencida<%= 's' if vencidas > 1 %>
+                      </span>
+                    <% else %>
+                      <span class="text-gray-400">-</span>
+                    <% end %>
+                  </td>
+                  <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                    <%= link_to responsavel_cobrancas_path(responsavel), class: "text-indigo-600 hover:text-indigo-900" do %>
+                      Ver Cobranças
+                    <% end %>
+                  </td>
+                </tr>
+              <% end %>
+            <% else %>
+              <tr>
+                <td colspan="7" class="px-6 py-12 text-center text-sm text-gray-500">
+                  <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhum responsável encontrado.</h3>
+                </td>
+              </tr>
+            <% end %>
+            <!-- Linha de Total -->
+            <% if @responsaveis.any? %>
+              <tr class="bg-gray-50 font-semibold">
+                <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-bold text-gray-900 sm:pl-6">
+                  TOTAL GERAL
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-bold text-gray-900">
+                  <%= @total_cobrancas %>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-bold text-gray-900">
+                  R$ <%= sprintf('%.2f', @total_valor_cobrancas).gsub('.', ',') %>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-bold text-green-600">
+                  R$ <%= sprintf('%.2f', @total_valor_pago).gsub('.', ',') %>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm font-bold text-red-600">
+                  R$ <%= sprintf('%.2f', @total_valor_pendente).gsub('.', ',') %>
+                </td>
+                <td class="whitespace-nowrap px-3 py-4 text-sm">
+                  <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">
+                    <%= @cobrancas_vencidas.count %> vencida<%= 's' if @cobrancas_vencidas.count != 1 %>
+                  </span>
+                </td>
+                <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                  <span class="text-gray-400">-</span>
+                </td>
+              </tr>
+            <% end %>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</div>

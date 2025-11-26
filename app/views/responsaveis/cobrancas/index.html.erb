@@ -1,0 +1,104 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="mb-6">
+    <%= link_to responsavel_path(@responsavel), class: "inline-flex items-center text-sm text-gray-500 hover:text-gray-700 mb-4" do %>
+      <svg class="mr-2 h-4 w-4" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 19l-7-7 7-7"/>
+      </svg>
+      Voltar
+    <% end %>
+    <h1 class="text-3xl font-bold text-gray-900">Cobranças - <%= @responsavel.nome %></h1>
+  </div>
+
+  <div class="bg-indigo-50 border border-indigo-200 rounded-lg p-4 mb-6">
+    <div class="flex items-center">
+      <svg class="h-5 w-5 text-indigo-600 mr-2" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"/>
+      </svg>
+      <span class="text-sm font-medium text-indigo-900">Total de Cobranças: <strong><%= @cobrancas.count %></strong></span>
+    </div>
+  </div>
+
+  <div class="mt-8 flow-root">
+    <div class="-mx-4 -my-2 overflow-x-auto sm:-mx-6 lg:-mx-8">
+      <div class="inline-block min-w-full py-2 align-middle sm:px-6 lg:px-8">
+        <div class="overflow-hidden shadow ring-1 ring-black ring-opacity-5 sm:rounded-lg">
+          <table class="min-w-full divide-y divide-gray-300">
+            <thead class="bg-gray-50">
+              <tr>
+                <th scope="col" class="py-3.5 pl-4 pr-3 text-left text-sm font-semibold text-gray-900 sm:pl-6">ID</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Valor</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Vencimento</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Método</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Status</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Plano</th>
+                <th scope="col" class="px-3 py-3.5 text-left text-sm font-semibold text-gray-900">Código Pagamento</th>
+                <th scope="col" class="relative py-3.5 pl-3 pr-4 sm:pr-6">
+                  <span class="sr-only">Ações</span>
+                </th>
+              </tr>
+            </thead>
+            <tbody class="divide-y divide-gray-200 bg-white">
+              <% if @cobrancas.any? %>
+                <% @cobrancas.each do |cobranca| %>
+                  <tr class="hover:bg-gray-50">
+                    <td class="whitespace-nowrap py-4 pl-4 pr-3 text-sm font-medium text-gray-900 sm:pl-6">
+                      #<%= cobranca.id %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                      <div class="font-semibold text-gray-900">R$ <%= sprintf('%.2f', cobranca.valor).gsub('.', ',') %></div>
+                      <% if cobranca.valor_pago > 0 && !cobranca.paga? %>
+                        <div class="text-xs text-gray-500 mt-1">
+                          Pago: R$ <%= sprintf('%.2f', cobranca.valor_pago).gsub('.', ',') %> 
+                          | Restante: R$ <%= sprintf('%.2f', cobranca.valor_restante).gsub('.', ',') %>
+                        </div>
+                      <% end %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <%= cobranca.data_vencimento.strftime('%d/%m/%Y') %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+                        <%= cobranca.metodo_pagamento %>
+                      </span>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm">
+                      <% case cobranca.status %>
+                      <% when 'PAGA' %>
+                        <span class="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">PAGA</span>
+                      <% when 'CANCELADA' %>
+                        <span class="inline-flex items-center rounded-full bg-red-100 px-2.5 py-0.5 text-xs font-medium text-red-800">CANCELADA</span>
+                      <% else %>
+                        <span class="inline-flex items-center rounded-full <%= cobranca.vencida? ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' %> px-2.5 py-0.5 text-xs font-medium">
+                          <%= cobranca.vencida? ? 'VENCIDA' : 'EMITIDA' %>
+                        </span>
+                      <% end %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500">
+                      Plano #<%= cobranca.plano_pagamento.id %> - <%= cobranca.plano_pagamento.centro_de_custo.nome %>
+                    </td>
+                    <td class="whitespace-nowrap px-3 py-4 text-sm text-gray-500 font-mono text-xs">
+                      <%= cobranca.codigo_pagamento %>
+                    </td>
+                    <td class="relative whitespace-nowrap py-4 pl-3 pr-4 text-right text-sm font-medium sm:pr-6">
+                      <% unless cobranca.paga? || cobranca.cancelada? %>
+                        <%= link_to new_pagamento_cobranca_path(cobranca), class: "inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-3 py-1.5 text-xs font-medium text-white shadow-sm hover:bg-indigo-700" do %>
+                          Pagar
+                        <% end %>
+                      <% end %>
+                    </td>
+                  </tr>
+                <% end %>
+              <% else %>
+                <tr>
+                  <td colspan="8" class="px-6 py-12 text-center text-sm text-gray-500">
+                    <h3 class="mt-2 text-sm font-medium text-gray-900">Nenhuma cobrança encontrada.</h3>
+                  </td>
+                </tr>
+              <% end %>
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

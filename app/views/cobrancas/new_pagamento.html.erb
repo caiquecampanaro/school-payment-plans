@@ -1,0 +1,84 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="max-w-2xl">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Registrar Pagamento</h1>
+
+    <div class="bg-gray-50 border border-gray-200 rounded-lg p-6 mb-6">
+      <h3 class="text-sm font-medium text-gray-500 mb-4">Informações da Cobrança</h3>
+      <dl class="grid grid-cols-2 gap-4">
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Cobrança ID</dt>
+          <dd class="mt-1 text-sm text-gray-900">#<%= @cobranca.id %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Valor Total</dt>
+          <dd class="mt-1 text-sm font-semibold text-gray-900">R$ <%= sprintf('%.2f', @cobranca.valor).gsub('.', ',') %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Valor Pago</dt>
+          <dd class="mt-1 text-sm text-gray-900">R$ <%= sprintf('%.2f', @cobranca.valor_pago).gsub('.', ',') %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Valor Restante</dt>
+          <dd class="mt-1 text-sm font-semibold <%= @cobranca.valor_restante > 0 ? 'text-red-600' : 'text-green-600' %>">
+            R$ <%= sprintf('%.2f', @cobranca.valor_restante).gsub('.', ',') %>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Vencimento</dt>
+          <dd class="mt-1 text-sm text-gray-900"><%= @cobranca.data_vencimento.strftime('%d/%m/%Y') %></dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Método</dt>
+          <dd class="mt-1">
+            <span class="inline-flex items-center rounded-md bg-blue-100 px-2 py-1 text-xs font-medium text-blue-800">
+              <%= @cobranca.metodo_pagamento %>
+            </span>
+          </dd>
+        </div>
+        <div>
+          <dt class="text-sm font-medium text-gray-500">Status</dt>
+          <dd class="mt-1">
+            <span class="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
+              <%= @cobranca.status %>
+            </span>
+          </dd>
+        </div>
+      </dl>
+    </div>
+
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <%= form_with url: pagamentos_cobranca_path(@cobranca), local: true, class: "space-y-6" do |form| %>
+          <div>
+            <%= form.label :valor, 'Valor do Pagamento', class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.number_field :valor, value: @cobranca.valor_restante, step: 0.01, min: 0.01, max: @cobranca.valor_restante, required: true, 
+                  name: 'pagamento[valor]', class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+            </div>
+            <p class="mt-1 text-xs text-gray-500">
+              Valor máximo: R$ <%= sprintf('%.2f', @cobranca.valor_restante).gsub('.', ',') %>
+              <% if @cobranca.valor_pago > 0 %>
+                <br>Você pode fazer pagamentos parciais. A cobrança será marcada como PAGA quando o valor total for atingido.
+              <% end %>
+            </p>
+          </div>
+
+          <div>
+            <%= form.label :data_pagamento, 'Data do Pagamento', class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.date_field :data_pagamento, value: Date.today, required: true,
+                  name: 'pagamento[data_pagamento]', class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+            </div>
+          </div>
+
+          <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+            <%= link_to responsavel_cobrancas_path(@cobranca.plano_pagamento.responsavel_financeiro), class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+              Cancelar
+            <% end %>
+            <%= form.submit 'Registrar Pagamento', class: "inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

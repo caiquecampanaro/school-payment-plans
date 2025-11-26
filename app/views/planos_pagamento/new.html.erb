@@ -1,0 +1,234 @@
+<div class="px-4 sm:px-6 lg:px-8">
+  <div class="max-w-3xl">
+    <h1 class="text-3xl font-bold text-gray-900 mb-6">Novo Plano de Pagamento</h1>
+
+    <% if @plano_pagamento&.errors&.any? || (defined?(@service_errors) && @service_errors&.any?) %>
+      <div class="mb-6 rounded-md bg-red-50 p-4 border-l-4 border-red-400">
+        <div class="flex">
+          <div class="flex-shrink-0">
+            <svg class="h-5 w-5 text-red-400" viewBox="0 0 20 20" fill="currentColor">
+              <path fill-rule="evenodd" d="M10 18a8 8 0 100-16 8 8 0 000 16zM8.707 7.293a1 1 0 00-1.414 1.414L8.586 10l-1.293 1.293a1 1 0 101.414 1.414L10 11.414l1.293 1.293a1 1 0 001.414-1.414L11.414 10l1.293-1.293a1 1 0 00-1.414-1.414L10 8.586 8.707 7.293z" clip-rule="evenodd"/>
+            </svg>
+          </div>
+          <div class="ml-3">
+            <h3 class="text-sm font-medium text-red-800">Erro ao criar plano de pagamento</h3>
+            <div class="mt-2 text-sm text-red-700">
+              <ul class="list-disc pl-5 space-y-1">
+                <% if @plano_pagamento&.errors&.any? %>
+                  <% @plano_pagamento.errors.full_messages.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                <% end %>
+                <% if defined?(@service_errors) && @service_errors&.any? %>
+                  <% @service_errors.each do |message| %>
+                    <li><%= message %></li>
+                  <% end %>
+                <% end %>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </div>
+    <% end %>
+
+    <div class="bg-white shadow rounded-lg">
+      <div class="px-4 py-5 sm:p-6">
+        <%= form_with url: planos_pagamento_path, local: true, class: "space-y-6" do |form| %>
+          <div>
+            <%= form.label :responsavel_id, 'Responsável Financeiro', class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.select :responsavel_id, 
+                  options_from_collection_for_select(@responsaveis, :id, :nome),
+                  { include_blank: 'Selecione...' }, 
+                  { required: true, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+            </div>
+          </div>
+
+          <div>
+            <%= form.label :centro_de_custo_id, 'Centro de Custo', class: "block text-sm font-medium text-gray-700" %>
+            <div class="mt-1">
+              <%= form.select :centro_de_custo_id,
+                  options_from_collection_for_select(@centros_de_custo, :id, :nome),
+                  { include_blank: 'Selecione...' }, 
+                  { required: true, class: "block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+            </div>
+          </div>
+
+          <!-- Opção de Modo de Criação -->
+          <div class="border-t border-gray-200 pt-6">
+            <div class="flex items-center mb-4">
+              <input type="radio" id="modo_manual" name="modo_criacao" value="manual" checked onchange="toggleModoCriacao()" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+              <label for="modo_manual" class="ml-2 block text-sm font-medium text-gray-700">Criar Cobranças Manualmente</label>
+            </div>
+            <div class="flex items-center mb-4">
+              <input type="radio" id="modo_parcelas" name="modo_criacao" value="parcelas" onchange="toggleModoCriacao()" class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300">
+              <label for="modo_parcelas" class="ml-2 block text-sm font-medium text-gray-700">Criar Parcelas Automaticamente</label>
+            </div>
+          </div>
+
+          <!-- Modo Manual -->
+          <div id="modo_manual_div" class="border-t border-gray-200 pt-6">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Cobranças</h3>
+            <div id="cobrancas" class="space-y-4">
+              <div class="cobranca-item border border-gray-200 rounded-lg p-4 bg-gray-50">
+                <div class="grid grid-cols-1 gap-4 sm:grid-cols-3">
+                  <div>
+                    <%= label_tag 'cobrancas[][valor]', 'Valor', class: "block text-sm font-medium text-gray-700" %>
+                    <%= number_field_tag 'cobrancas[][valor]', nil, step: 0.01, min: 0.01, required: true, 
+                        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                  </div>
+                  <div>
+                    <%= label_tag 'cobrancas[][data_vencimento]', 'Data de Vencimento', class: "block text-sm font-medium text-gray-700" %>
+                    <%= date_field_tag 'cobrancas[][data_vencimento]', nil, required: true, 
+                        class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                  </div>
+                  <div>
+                    <%= label_tag 'cobrancas[][metodo_pagamento]', 'Método de Pagamento', class: "block text-sm font-medium text-gray-700" %>
+                    <%= select_tag 'cobrancas[][metodo_pagamento]',
+                        options_for_select([['BOLETO', 'BOLETO'], ['PIX', 'PIX']]),
+                        { required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+                  </div>
+                </div>
+              </div>
+            </div>
+
+            <button type="button" onclick="adicionarCobranca()" class="mt-4 inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2">
+              <svg class="-ml-1 mr-2 h-5 w-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 4v16m8-8H4"/>
+              </svg>
+              Adicionar Cobrança
+            </button>
+          </div>
+
+          <!-- Modo Parcelas -->
+          <div id="modo_parcelas_div" class="border-t border-gray-200 pt-6 hidden">
+            <h3 class="text-lg font-medium text-gray-900 mb-4">Configuração de Parcelas</h3>
+            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2">
+              <div>
+                <%= label_tag 'valor_total_parcelas', 'Valor Total', class: "block text-sm font-medium text-gray-700" %>
+                <%= number_field_tag 'valor_total_parcelas', nil, step: 0.01, min: 0.01, 
+                    class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+              </div>
+              <div>
+                <%= label_tag 'quantidade_parcelas', 'Quantidade de Parcelas', class: "block text-sm font-medium text-gray-700" %>
+                <%= select_tag 'quantidade_parcelas',
+                    options_for_select([
+                      ['1x', 1],
+                      ['2x', 2],
+                      ['3x', 3],
+                      ['4x', 4],
+                      ['5x', 5],
+                      ['6x', 6],
+                      ['7x', 7],
+                      ['8x', 8],
+                      ['9x', 9],
+                      ['10x', 10],
+                      ['11x', 11],
+                      ['12x', 12],
+                      ['18x', 18]
+                    ]),
+                    { include_blank: 'Selecione...', required: true, class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+              </div>
+              <div>
+                <%= label_tag 'data_primeiro_vencimento', 'Data do Primeiro Vencimento', class: "block text-sm font-medium text-gray-700" %>
+                <%= date_field_tag 'data_primeiro_vencimento', nil, 
+                    class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+              </div>
+              <div>
+                <%= label_tag 'intervalo_dias', 'Intervalo entre Parcelas (dias)', class: "block text-sm font-medium text-gray-700" %>
+                <%= number_field_tag 'intervalo_dias', 30, min: 1, step: 1, 
+                    class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" %>
+                <p class="mt-1 text-xs text-gray-500">Padrão: 30 dias (mensal)</p>
+              </div>
+              <div class="sm:col-span-2">
+                <%= label_tag 'metodo_pagamento_parcelas', 'Método de Pagamento', class: "block text-sm font-medium text-gray-700" %>
+                <%= select_tag 'metodo_pagamento_parcelas',
+                    options_for_select([['BOLETO', 'BOLETO'], ['PIX', 'PIX']]),
+                    { class: "mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm" } %>
+              </div>
+            </div>
+            <%= hidden_field_tag 'criar_parcelas', '0', id: 'criar_parcelas_hidden' %>
+          </div>
+
+          <div class="flex items-center justify-end space-x-3 pt-4 border-t border-gray-200">
+            <%= link_to planos_pagamento_path, class: "inline-flex items-center rounded-md border border-gray-300 bg-white px-4 py-2 text-sm font-medium text-gray-700 shadow-sm hover:bg-gray-50 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" do %>
+              Cancelar
+            <% end %>
+            <%= form.submit 'Criar Plano de Pagamento', class: "inline-flex items-center rounded-md border border-transparent bg-indigo-600 px-4 py-2 text-sm font-medium text-white shadow-sm hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:ring-offset-2" %>
+          </div>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+  function toggleModoCriacao() {
+    const modoManual = document.getElementById('modo_manual').checked;
+    const modoManualDiv = document.getElementById('modo_manual_div');
+    const modoParcelasDiv = document.getElementById('modo_parcelas_div');
+    const criarParcelasHidden = document.getElementById('criar_parcelas_hidden');
+
+    if (modoManual) {
+      modoManualDiv.classList.remove('hidden');
+      modoParcelasDiv.classList.add('hidden');
+      criarParcelasHidden.value = '0';
+      // Tornar campos manuais obrigatórios
+      modoManualDiv.querySelectorAll('input[required], select[required]').forEach(el => el.required = true);
+      modoParcelasDiv.querySelectorAll('input, select').forEach(el => el.required = false);
+    } else {
+      modoManualDiv.classList.add('hidden');
+      modoParcelasDiv.classList.remove('hidden');
+      criarParcelasHidden.value = '1';
+      // Tornar campos de parcelas obrigatórios
+      modoParcelasDiv.querySelectorAll('input, select').forEach(el => {
+        if (el.id !== 'intervalo_dias') el.required = true;
+      });
+      modoManualDiv.querySelectorAll('input[required], select[required]').forEach(el => el.required = false);
+    }
+  }
+
+  function adicionarCobranca() {
+    const cobrancasDiv = document.getElementById('cobrancas');
+    const primeiraCobranca = cobrancasDiv.firstElementChild;
+    const novaCobranca = primeiraCobranca.cloneNode(true);
+    
+    // Limpar valores e atualizar índices
+    novaCobranca.querySelectorAll('input, select').forEach(input => {
+      input.value = '';
+      // Atualizar o name para o próximo índice
+      const name = input.name.replace(/\[\d+\]/, `[${cobrancasDiv.children.length}]`);
+      input.name = name;
+      // Remover required da primeira cobrança se houver mais de uma
+      if (cobrancasDiv.children.length > 0) {
+        primeiraCobranca.querySelectorAll('input[required], select[required]').forEach(el => {
+          el.removeAttribute('required');
+        });
+      }
+    });
+    
+    cobrancasDiv.appendChild(novaCobranca);
+  }
+  
+  // Garantir que apenas cobranças preenchidas sejam enviadas
+  document.addEventListener('DOMContentLoaded', function() {
+    const form = document.querySelector('form');
+    if (form) {
+      form.addEventListener('submit', function(e) {
+        const cobrancasDiv = document.getElementById('cobrancas');
+        if (cobrancasDiv) {
+          // Remover cobranças vazias antes de enviar
+          cobrancasDiv.querySelectorAll('.cobranca-item').forEach((item, index) => {
+            const valor = item.querySelector('input[name*="[valor]"]')?.value;
+            const data = item.querySelector('input[name*="[data_vencimento]"]')?.value;
+            
+            // Se a cobrança está vazia e não é a primeira, removê-la
+            if (!valor && !data && index > 0) {
+              item.remove();
+            }
+          });
+        }
+      });
+    }
+  });
+</script>
