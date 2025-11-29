@@ -11,7 +11,7 @@ gem 'graphql', '~> 2.0'
 
 group :development, :test do
   gem 'dotenv-rails', '~> 2.8'
-  gem 'byebug', platforms: [:mri, :mingw, :x64_mingw]
+  gem 'byebug', platforms: [:mri, :windows]
   gem 'rspec-rails', '~> 6.0'
   gem 'factory_bot_rails', '~> 6.2'
   gem 'faker', '~> 3.0'
