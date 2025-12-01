@@ -73,18 +73,14 @@ RSpec.describe 'Security Tests', type: :request do
         ]
       }
 
-      # Deve falhar na validação, não executar o script
       expect(response).to have_http_status(:unprocessable_entity)
     end
   end
 
   describe 'XSRF/CSRF Protection' do
     it 'validates request authenticity for state-changing operations' do
-      # Em modo API, o Rails não usa CSRF tokens por padrão
-      # Mas podemos verificar que as rotas estão protegidas
       responsavel = ResponsavelFinanceiro.create!(nome: 'Test', identificador: '123')
 
-      # Testa que POST requer parâmetros válidos
       post '/responsaveis', params: {}
       
       expect(response).to have_http_status(:bad_request)
@@ -93,10 +89,8 @@ RSpec.describe 'Security Tests', type: :request do
     it 'requires proper HTTP methods for actions' do
       responsavel = ResponsavelFinanceiro.create!(nome: 'Test', identificador: '123')
 
-      # Tenta usar GET em uma ação que requer POST
       get '/responsaveis', params: { responsavel: { nome: 'Test', identificador: '456' } }
       
-      # Deve retornar método não permitido ou não encontrado
       expect(response).to have_http_status(:method_not_allowed).or have_http_status(:not_found)
     end
   end
@@ -107,15 +101,14 @@ RSpec.describe 'Security Tests', type: :request do
         responsavel: {
           nome: 'Test',
           identificador: '123',
-          id: 999, # Parâmetro não autorizado
-          created_at: Time.zone.now # Parâmetro não autorizado
+          id: 999,
+          created_at: Time.zone.now
         }
       }
 
       expect(response).to have_http_status(:created)
       json_response = JSON.parse(response.body)
       
-      # Verifica que parâmetros não autorizados não foram salvos
       expect(json_response['id']).not_to eq(999)
     end
 
@@ -123,7 +116,6 @@ RSpec.describe 'Security Tests', type: :request do
       post '/responsaveis', params: {
         responsavel: {
           nome: 'Test'
-          # identificador faltando
         }
       }
 

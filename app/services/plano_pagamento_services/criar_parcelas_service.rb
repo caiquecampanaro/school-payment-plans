@@ -11,7 +11,6 @@ module PlanoPagamentoServices
     end
 
     def call
-      # Valida quantidade de parcelas permitidas (1-12 ou 18)
       parcelas_permitidas = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 18]
       unless parcelas_permitidas.include?(quantidade_parcelas)
         raise ArgumentError, "Quantidade de parcelas inválida. Valores permitidos: 1 até 12 ou 18."

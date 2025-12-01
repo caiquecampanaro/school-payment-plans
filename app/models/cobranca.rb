@@ -43,7 +43,6 @@ class Cobranca < ApplicationRecord
     if pago_totalmente?
       update(status: :paga) unless paga?
     elsif status == 'PAGA'
-      # Se estava paga mas agora tem valor restante, volta para emitida
       update(status: :emitida)
     end
   end

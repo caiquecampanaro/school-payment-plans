@@ -39,7 +39,6 @@ module CobrancaServices
     def criar_pagamento
       valor_pagamento = params[:valor] || @cobranca.valor_restante
       
-      # Valida se o valor não excede o restante
       if valor_pagamento > @cobranca.valor_restante
         @errors << "O valor do pagamento (R$ #{sprintf('%.2f', valor_pagamento).gsub('.', ',')}) não pode ser maior que o valor restante (R$ #{sprintf('%.2f', @cobranca.valor_restante).gsub('.', ',')})"
         raise ActiveRecord::Rollback
