@@ -21,12 +21,10 @@ RSpec.describe 'Security Tests', type: :request do
         get "/responsaveis/#{malicious_input}"
       }.not_to raise_error
       
-      # Verifica que a tabela ainda existe
       expect(ResponsavelFinanceiro.count).to eq(1)
     end
 
     it 'uses parameterized queries in controllers' do
-      # Testa que strong parameters estão sendo usados
       post '/responsaveis', params: {
         responsavel: {
           nome: "Test'; DROP TABLE responsaveis_financeiros; --",
@@ -34,7 +32,6 @@ RSpec.describe 'Security Tests', type: :request do
         }
       }
       
-      # Se strong parameters estiver funcionando, o SQL injection não será executado
       expect(ResponsavelFinanceiro.count).to eq(2)
       expect(ResponsavelFinanceiro.last.nome).to include("DROP TABLE")
     end
@@ -52,9 +49,7 @@ RSpec.describe 'Security Tests', type: :request do
       expect(response).to have_http_status(:created)
       json_response = JSON.parse(response.body)
       
-      # Verifica que o script não está executável no JSON
       expect(json_response['nome']).to include('<script>')
-      # O Rails API mode não renderiza HTML, então o script não será executado
     end
 
     it 'handles malicious input in cobranca creation' do
